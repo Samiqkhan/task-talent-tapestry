@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ServiceCard } from "@/components/ServiceCard";
 import { FeatureCard } from "@/components/FeatureCard";
@@ -5,6 +6,13 @@ import { CustomRequestForm } from "@/components/CustomRequestForm";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { OtherServices } from "@/components/OtherServices";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import {
   Zap,
   Wrench,
@@ -21,9 +29,38 @@ import {
 } from "lucide-react";
 
 const Index = () => {
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState("");
+
+  const openServiceForm = (serviceTitle: string) => {
+    setSelectedService(serviceTitle);
+    setIsFormOpen(true);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
+
+      {/* Service Request Modal */}
+      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+        <DialogContent className="sm:max-w-[525px]">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">
+              Request: {selectedService || "Custom Service"}
+            </DialogTitle>
+            <DialogDescription>
+              Please fill in your details below, and we'll connect you with a
+              professional.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="pt-4">
+            <CustomRequestForm
+              serviceName={selectedService}
+              onSuccess={() => setIsFormOpen(false)}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Hero Section */}
       <section
@@ -59,7 +96,7 @@ const Index = () => {
             <Button size="lg" onClick={() => document.getElementById("services")?.scrollIntoView({ behavior: "smooth" })}>
               Browse Services
             </Button>
-            <Button size="lg" variant="outline" onClick={() => document.getElementById("request")?.scrollIntoView({ behavior: "smooth" })}>
+            <Button size="lg" variant="outline" onClick={() => openServiceForm("Custom Request")}>
               Custom Request
             </Button>
           </div>
@@ -98,16 +135,19 @@ const Index = () => {
               icon={Zap}
               title="Electrician"
               description="Expert electrical repairs and installations"
+              onClick={() => openServiceForm("Electrician")}
             />
             <ServiceCard
               icon={Wrench}
               title="Plumber"
               description="Fast and reliable plumbing solutions"
+              onClick={() => openServiceForm("Plumber")}
             />
             <ServiceCard
               icon={Sparkles}
               title="Maid"
               description="Professional cleaning services"
+              onClick={() => openServiceForm("Maid")}
             />
           </div>
 
@@ -125,18 +165,20 @@ const Index = () => {
               icon={Stethoscope}
               title="Doctor"
               description="Medical consultation and health advice"
+              onClick={() => openServiceForm("Doctor")}
             />
             <ServiceCard
               icon={GraduationCap}
               title="Tutor"
               description="Expert tutoring for all subjects"
+              onClick={() => openServiceForm("Tutor")}
             />
           </div>
         </div>
       </section>
 
       {/* Other Services Section */}
-      <OtherServices />
+      <OtherServices onServiceClick={openServiceForm} />
 
       {/* Features Section */}
       <section className="py-20 px-4 bg-secondary/50">
@@ -237,7 +279,7 @@ const Index = () => {
           </div>
 
           <div className="bg-card p-8 md:p-12 rounded-3xl border border-border shadow-xl">
-            <CustomRequestForm />
+            <CustomRequestForm serviceName="Custom Request" />
           </div>
 
           <div className="mt-8 text-center text-sm text-muted-foreground">

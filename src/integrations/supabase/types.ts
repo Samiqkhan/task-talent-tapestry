@@ -17,7 +17,7 @@ export type Database = {
       custom_requests: {
         Row: {
           created_at: string
-          email: string
+          phone: string // Changed from email
           id: string
           name: string
           request: string
@@ -26,7 +26,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
-          email: string
+          phone: string // Changed from email
           id?: string
           name: string
           request: string
@@ -35,7 +35,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
-          email?: string
+          phone?: string // Changed from email
           id?: string
           name?: string
           request?: string

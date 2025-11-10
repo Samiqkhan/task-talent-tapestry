@@ -11,13 +11,13 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { ArrowLeft, RefreshCw } from "lucide-react";
+import { ArrowLeft, RefreshCw, LogOut, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface CustomRequest {
   id: string;
   name: string;
-  email: string;
+  phone: string;
   request: string;
   status: string;
   created_at: string;
@@ -37,9 +37,11 @@ const Admin = () => {
 
       if (error) throw error;
       setRequests(data || []);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching requests:", error);
-      toast.error("Failed to load requests");
+      toast.error("Failed to load requests", {
+        description: error.message,
+      });
     } finally {
       setLoading(false);
     }
@@ -54,10 +56,51 @@ const Admin = () => {
 
       if (error) throw error;
       toast.success("Status updated successfully");
-      fetchRequests();
-    } catch (error) {
+      // Realtime listener will handle the refresh
+    } catch (error: any) {
       console.error("Error updating status:", error);
-      toast.error("Failed to update status");
+      toast.error("Failed to update status", {
+        description: error.message,
+      });
+    }
+  };
+
+  const deleteRequest = async (id: string) => {
+    if (!window.confirm("Are you sure you want to delete this request? This action cannot be undone.")) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from("custom_requests")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+      toast.success("Request deleted successfully");
+      
+      // *** THIS IS THE NEW LINE ***
+      // Manually filter out the deleted request from the local state
+      setRequests(currentRequests =>
+        currentRequests.filter(req => req.id !== id)
+      );
+      // ***************************
+
+    } catch (error: any) {
+      console.error("Error deleting request:", error);
+      toast.error("Failed to delete request", {
+        description: error.message,
+      });
+    }
+  };
+
+  const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast.error("Failed to sign out", { description: error.message });
+    } else {
+      toast.success("Signed out successfully");
+      navigate("/"); // Navigate to home page after sign out
     }
   };
 
@@ -74,7 +117,9 @@ const Admin = () => {
           schema: "public",
           table: "custom_requests",
         },
-        () => {
+        (payload) => {
+          console.log("Change received!", payload);
+          // Re-fetch data on any change
           fetchRequests();
         }
       )
@@ -88,7 +133,7 @@ const Admin = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
           <div className="flex items-center gap-4">
             <Button
               variant="outline"
@@ -99,10 +144,16 @@ const Admin = () => {
             </Button>
             <h1 className="text-4xl font-bold text-foreground">Admin Panel</h1>
           </div>
-          <Button onClick={fetchRequests} variant="outline">
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Refresh
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button onClick={fetchRequests} variant="outline" disabled={loading}>
+              <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+            <Button onClick={handleSignOut} variant="destructive" size="sm">
+              <LogOut className="h-4 w-4 mr-2" />
+              Sign Out
+            </Button>
+          </div>
         </div>
 
         {loading ? (
@@ -119,7 +170,7 @@ const Admin = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
+                  <TableHead>Phone Number</TableHead>
                   <TableHead>Request</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Date</TableHead>
@@ -130,7 +181,7 @@ const Admin = () => {
                 {requests.map((req) => (
                   <TableRow key={req.id} className="animate-fade-in">
                     <TableCell className="font-medium">{req.name}</TableCell>
-                    <TableCell>{req.email}</TableCell>
+                    <TableCell>{req.phone}</TableCell>
                     <TableCell className="max-w-md truncate">
                       {req.request}
                     </TableCell>
@@ -167,6 +218,15 @@ const Admin = () => {
                             onClick={() => updateStatus(req.id, "completed")}
                           >
                             Complete
+                          </Button>
+                        )}
+                        {req.status === "completed" && (
+                           <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => deleteRequest(req.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
                           </Button>
                         )}
                       </div>

@@ -13,7 +13,11 @@ import {
   Bug,
 } from "lucide-react";
 
-export const OtherServices = () => {
+interface OtherServicesProps {
+  onServiceClick: (serviceName: string) => void;
+}
+
+export const OtherServices = ({ onServiceClick }: OtherServicesProps) => {
   const services = [
     { icon: ChefHat, title: "Cook", description: "Professional cooking services" },
     { icon: Hammer, title: "Carpenter", description: "Expert carpentry work" },
@@ -51,6 +55,7 @@ export const OtherServices = () => {
                 icon={service.icon}
                 title={service.title}
                 description={service.description}
+                onClick={() => onServiceClick(service.title)}
               />
             </div>
           ))}
