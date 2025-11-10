@@ -5,22 +5,39 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Send } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const CustomRequestForm = () => {
   const [request, setRequest] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!request.trim() || !name.trim() || !email.trim()) {
       toast.error("Please fill in all fields");
       return;
     }
-    toast.success("Request submitted! We'll get back to you soon.");
-    setRequest("");
-    setName("");
-    setEmail("");
+
+    setIsSubmitting(true);
+    try {
+      const { error } = await supabase
+        .from("custom_requests")
+        .insert([{ name, email, request }]);
+
+      if (error) throw error;
+
+      toast.success("Request submitted! We'll get back to you soon.");
+      setRequest("");
+      setName("");
+      setEmail("");
+    } catch (error) {
+      console.error("Error submitting request:", error);
+      toast.error("Failed to submit request. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -58,9 +75,9 @@ export const CustomRequestForm = () => {
           className="min-h-[120px] rounded-xl resize-none"
         />
       </div>
-      <Button type="submit" size="lg" className="w-full md:w-auto">
+      <Button type="submit" size="lg" className="w-full md:w-auto" disabled={isSubmitting}>
         <Send className="w-5 h-5 mr-2" />
-        Submit Request
+        {isSubmitting ? "Submitting..." : "Submit Request"}
       </Button>
     </form>
   );

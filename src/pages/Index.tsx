@@ -4,6 +4,7 @@ import { FeatureCard } from "@/components/FeatureCard";
 import { CustomRequestForm } from "@/components/CustomRequestForm";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { OtherServices } from "@/components/OtherServices";
 import {
   Zap,
   Wrench,
@@ -133,6 +134,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Other Services Section */}
+      <OtherServices />
 
       {/* Features Section */}
       <section className="py-20 px-4 bg-secondary/50">

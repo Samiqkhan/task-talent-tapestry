@@ -1,9 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Shield } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -48,6 +50,10 @@ export const Navbar = () => {
             >
               Custom Request
             </button>
+            <Button variant="outline" size="sm" onClick={() => navigate("/admin")}>
+              <Shield className="w-4 h-4 mr-2" />
+              Admin
+            </Button>
             <Button onClick={() => scrollToSection("request")}>Get Started</Button>
           </div>
 
@@ -62,7 +68,7 @@ export const Navbar = () => {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden mt-4 pb-4 space-y-4">
+          <div className="md:hidden mt-4 pb-4 space-y-4 animate-fade-in">
             <button
               onClick={() => scrollToSection("home")}
               className="block w-full text-left py-2 text-foreground hover:text-primary transition-colors font-medium"
@@ -87,6 +93,10 @@ export const Navbar = () => {
             >
               Custom Request
             </button>
+            <Button variant="outline" onClick={() => { navigate("/admin"); setIsMenuOpen(false); }} className="w-full">
+              <Shield className="w-4 h-4 mr-2" />
+              Admin Panel
+            </Button>
             <Button onClick={() => scrollToSection("request")} className="w-full">
               Get Started
             </Button>

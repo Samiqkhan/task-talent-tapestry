@@ -1,0 +1,61 @@
+import { ServiceCard } from "@/components/ServiceCard";
+import {
+  ChefHat,
+  Hammer,
+  PaintBucket,
+  Flower2,
+  Baby,
+  PawPrint,
+  Wrench,
+  Car,
+  Snowflake,
+  ShieldCheck,
+  Bug,
+} from "lucide-react";
+
+export const OtherServices = () => {
+  const services = [
+    { icon: ChefHat, title: "Cook", description: "Professional cooking services" },
+    { icon: Hammer, title: "Carpenter", description: "Expert carpentry work" },
+    { icon: PaintBucket, title: "Painter", description: "Quality painting services" },
+    { icon: Flower2, title: "Gardener", description: "Garden maintenance" },
+    { icon: Baby, title: "Babysitter", description: "Child care services" },
+    { icon: PawPrint, title: "Pet Sitter", description: "Pet care services" },
+    { icon: Wrench, title: "Mechanic", description: "Vehicle repairs" },
+    { icon: Car, title: "Driver", description: "Professional driving" },
+    { icon: Snowflake, title: "AC Tech", description: "AC repair & maintenance" },
+    { icon: ShieldCheck, title: "Security", description: "Security services" },
+    { icon: Bug, title: "Pest Control", description: "Pest removal services" },
+  ];
+
+  return (
+    <section className="py-20 px-4 bg-secondary/30">
+      <div className="container mx-auto max-w-6xl">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+            Other Services
+          </h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            More professionals ready to help with your everyday needs.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+          {services.map((service, index) => (
+            <div
+              key={service.title}
+              className="animate-fade-in"
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
+              <ServiceCard
+                icon={service.icon}
+                title={service.title}
+                description={service.description}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
