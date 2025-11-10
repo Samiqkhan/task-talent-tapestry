@@ -79,12 +79,9 @@ const Admin = () => {
       if (error) throw error;
       toast.success("Request deleted successfully");
       
-      // *** THIS IS THE NEW LINE ***
-      // Manually filter out the deleted request from the local state
-      setRequests(currentRequests =>
-        currentRequests.filter(req => req.id !== id)
-      );
-      // ***************************
+      // The local setRequests(...) line was removed.
+      // The realtime subscription in useEffect will now handle the UI update
+      // by calling fetchRequests() automatically.
 
     } catch (error: any) {
       console.error("Error deleting request:", error);
@@ -113,7 +110,7 @@ const Admin = () => {
       .on(
         "postgres_changes",
         {
-          event: "*",
+          event: "*", // This listens for INSERT, UPDATE, and DELETE
           schema: "public",
           table: "custom_requests",
         },
