@@ -34,8 +34,8 @@ export const Footer = () => {
           <div>
             <h4 className="font-semibold text-foreground mb-4">Contact</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>Email: support@ownstore.com</li>
-              <li>Phone: +1 (555) 123-4567</li>
+              <li>Email: main@ownstore.com</li>
+              <li>Phone: +91 6382 368 791</li>
               <li>Hours: 24/7 Support</li>
             </ul>
           </div>

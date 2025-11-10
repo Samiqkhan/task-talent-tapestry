@@ -17,9 +17,7 @@ export const Navbar = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-bold text-primary">OWNSTORE</h1>
-            <span className="text-sm text-muted-foreground hidden sm:inline">
-              👷 💼
-            </span>
+            
           </div>
 
           {/* Desktop Menu */}
@@ -48,7 +46,16 @@ export const Navbar = () => {
             >
               Custom Request
             </button>
-            <Button onClick={() => scrollToSection("request")}>Get Started</Button>
+            <Button
+              size="sm"
+              onClick={() =>
+                document
+                  .getElementById("services")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
+            >
+              Browse Services
+            </Button>
           </div>
 
           {/* Mobile Menu Button */}
