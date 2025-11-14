@@ -185,7 +185,7 @@ const Index = () => {
             <ServiceCard
               icon={GraduationCap}
               title="Tutor"
-              description="Expert tutoring for all subjects"
+              description="Career Guidance"
               onClick={() => openServiceForm("Tutor")}
             />
           </div>

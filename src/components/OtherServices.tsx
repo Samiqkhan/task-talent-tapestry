@@ -3,14 +3,13 @@ import {
   ChefHat,
   Hammer,
   PaintBucket,
-  Flower2,
-  Baby,
-  PawPrint,
   Wrench,
   Car,
   Snowflake,
   ShieldCheck,
-  Bug,
+  Calculator, // Added for Taxation
+  Sparkles, // Added for Beautician
+  Stethoscope, // Added for Medician
 } from "lucide-react";
 
 interface OtherServicesProps {
@@ -22,14 +21,25 @@ export const OtherServices = ({ onServiceClick }: OtherServicesProps) => {
     { icon: ChefHat, title: "Cook", description: "Professional cooking services" },
     { icon: Hammer, title: "Carpenter", description: "Expert carpentry work" },
     { icon: PaintBucket, title: "Painter", description: "Quality painting services" },
-    { icon: Flower2, title: "Gardener", description: "Garden maintenance" },
-    { icon: Baby, title: "Babysitter", description: "Child care services" },
-    { icon: PawPrint, title: "Pet Sitter", description: "Pet care services" },
     { icon: Wrench, title: "Mechanic", description: "Vehicle repairs" },
     { icon: Car, title: "Driver", description: "Professional driving" },
     { icon: Snowflake, title: "AC Tech", description: "AC repair & maintenance" },
     { icon: ShieldCheck, title: "Security", description: "Security services" },
-    { icon: Bug, title: "Pest Control", description: "Pest removal services" },
+    {
+      icon: Calculator,
+      title: "Taxation & Insurance",
+      description: "Tax and insurance filing",
+    },
+    {
+      icon: Sparkles,
+      title: "Beautician",
+      description: "Beauty & salon services",
+    },
+    {
+      icon: Stethoscope,
+      title: "Medician",
+      description: "Home medical services",
+    },
   ];
 
   return (
