@@ -60,7 +60,7 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
 
       // 2. Send Email via FormSubmit
       // REPLACE "YOUR_EMAIL@GMAIL.COM" WITH YOUR ACTUAL BUSINESS EMAIL
-      await fetch("https://formsubmit.co/ajax/admin@ownstore.org", {
+      await fetch("https://formsubmit.co/ajax/main@ownstore.org", {
         method: "POST",
         headers: { 
             'Content-Type': 'application/json',
