@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input"; // Import Input component
 import {
   Table,
   TableBody,
@@ -21,6 +22,7 @@ interface CustomRequest {
   request: string;
   status: string;
   created_at: string;
+  assigned_to?: string | null;
 }
 
 const Admin = () => {
@@ -56,10 +58,27 @@ const Admin = () => {
 
       if (error) throw error;
       toast.success("Status updated successfully");
-      // Realtime listener will handle the refresh
     } catch (error: any) {
       console.error("Error updating status:", error);
       toast.error("Failed to update status", {
+        description: error.message,
+      });
+    }
+  };
+
+  // This function saves the name when the user finishes typing
+  const assignMember = async (id: string, memberName: string) => {
+    try {
+      const { error } = await supabase
+        .from("custom_requests")
+        .update({ assigned_to: memberName })
+        .eq("id", id);
+
+      if (error) throw error;
+      toast.success("Assigned successfully");
+    } catch (error: any) {
+      console.error("Error assigning member:", error);
+      toast.error("Failed to assign member", {
         description: error.message,
       });
     }
@@ -78,11 +97,6 @@ const Admin = () => {
 
       if (error) throw error;
       toast.success("Request deleted successfully");
-      
-      // The local setRequests(...) line was removed.
-      // The realtime subscription in useEffect will now handle the UI update
-      // by calling fetchRequests() automatically.
-
     } catch (error: any) {
       console.error("Error deleting request:", error);
       toast.error("Failed to delete request", {
@@ -97,26 +111,24 @@ const Admin = () => {
       toast.error("Failed to sign out", { description: error.message });
     } else {
       toast.success("Signed out successfully");
-      navigate("/"); // Navigate to home page after sign out
+      navigate("/");
     }
   };
 
   useEffect(() => {
     fetchRequests();
 
-    // Set up realtime subscription
     const channel = supabase
       .channel("custom_requests_changes")
       .on(
         "postgres_changes",
         {
-          event: "*", // This listens for INSERT, UPDATE, and DELETE
+          event: "*",
           schema: "public",
           table: "custom_requests",
         },
         (payload) => {
           console.log("Change received!", payload);
-          // Re-fetch data on any change
           fetchRequests();
         }
       )
@@ -162,13 +174,14 @@ const Admin = () => {
             <p className="text-muted-foreground text-lg">No requests yet</p>
           </div>
         ) : (
-          <div className="bg-card rounded-2xl border border-border overflow-hidden">
+          <div className="bg-card rounded-2xl border border-border overflow-visible">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
-                  <TableHead>Phone Number</TableHead>
+                  <TableHead>Phone</TableHead>
                   <TableHead>Request</TableHead>
+                  <TableHead className="w-[200px]">Assigned To</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Actions</TableHead>
@@ -182,6 +195,22 @@ const Admin = () => {
                     <TableCell className="max-w-md truncate">
                       {req.request}
                     </TableCell>
+                    
+                    {/* INPUT FIELD FOR FILLING IN NAME */}
+                    <TableCell>
+                      <Input 
+                        placeholder="Type name..."
+                        defaultValue={req.assigned_to || ""}
+                        className="h-8"
+                        // onBlur means "when you click away" or "press tab"
+                        onBlur={(e) => {
+                          if (e.target.value !== (req.assigned_to || "")) {
+                            assignMember(req.id, e.target.value);
+                          }
+                        }}
+                      />
+                    </TableCell>
+
                     <TableCell>
                       <Badge
                         variant={

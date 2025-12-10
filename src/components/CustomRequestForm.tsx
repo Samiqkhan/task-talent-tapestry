@@ -15,7 +15,7 @@ interface CustomRequestFormProps {
 export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormProps) => {
   const [request, setRequest] = useState("");
   const [name, setName] = useState("");
-  const [phone, setPhone] = useState(""); // Changed from email
+  const [phone, setPhone] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -28,24 +28,42 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!request.trim() || !name.trim() || !phone.trim()) { // Changed from email
+    if (!request.trim() || !name.trim() || !phone.trim()) {
       toast.error("Please fill in all fields");
       return;
     }
 
     setIsSubmitting(true);
     try {
+      // 1. Save to Supabase (Keep your existing database logic)
       const { error } = await supabase
         .from("custom_requests")
-        .insert([{ name, phone, request: request || serviceName || "General Inquiry" }]); // Changed from email
+        .insert([{ name, phone, request: request || serviceName || "General Inquiry" }]);
 
       if (error) throw error;
+
+      // 2. Send Email via FormSubmit (Free, No Account Needed)
+      // REPLACE "YOUR_EMAIL@GMAIL.COM" WITH YOUR ACTUAL BUSINESS EMAIL
+      await fetch("https://formsubmit.co/ajax/ownstoredemo@gmail.com", {
+        method: "POST",
+        headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            // These fields will appear in your email
+            Title: "New Order Request", 
+            Name: name,
+            Phone: phone,
+            Request: request || serviceName || "General Inquiry"
+        })
+      });
 
       toast.success("Request submitted! We'll get back to you soon.");
       setRequest("");
       setName("");
-      setPhone(""); // Changed from email
-      onSuccess?.(); // Call the success callback to close the modal
+      setPhone("");
+      onSuccess?.();
     } catch (error: any) {
       console.error("Error submitting request:", error);
       toast.error("Failed to submit request. Please try again.", {
@@ -73,10 +91,10 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
           <Label htmlFor="phone">Phone Number</Label> 
           <Input
             id="phone"
-            type="tel" // Changed from email
-            placeholder="Enter your phone number" // Changed placeholder
+            type="tel"
+            placeholder="Enter your phone number"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)} // Changed from email
+            onChange={(e) => setPhone(e.target.value)}
             className="rounded-xl h-12"
           />
         </div>
