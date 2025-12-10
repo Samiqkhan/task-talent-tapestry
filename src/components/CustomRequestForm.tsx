@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { Send } from "lucide-react";
+import { Send, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface CustomRequestFormProps {
@@ -18,6 +18,16 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
   const [phone, setPhone] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Quick tags for users to click
+  const quickTags = [
+    "🍔 Food Delivery", 
+    "💊 Medicine", 
+    "🎁 Gift Pickup", 
+    "🧹 House Cleaning",
+    "📦 Courier",
+    "🔧 Repair"
+  ];
+
   useEffect(() => {
     if (serviceName && serviceName !== "Custom Request") {
       setRequest(`I'm interested in the ${serviceName} service. `);
@@ -25,6 +35,12 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
       setRequest("");
     }
   }, [serviceName]);
+
+  const addTag = (tag: string) => {
+    // Remove the emoji for the text input
+    const cleanTag = tag.substring(2); 
+    setRequest((prev) => prev ? `${prev}, ${cleanTag}` : `I need ${cleanTag}`);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,23 +51,22 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
 
     setIsSubmitting(true);
     try {
-      // 1. Save to Supabase (Keep your existing database logic)
+      // 1. Save to Supabase
       const { error } = await supabase
         .from("custom_requests")
         .insert([{ name, phone, request: request || serviceName || "General Inquiry" }]);
 
       if (error) throw error;
 
-      // 2. Send Email via FormSubmit (Free, No Account Needed)
+      // 2. Send Email via FormSubmit
       // REPLACE "YOUR_EMAIL@GMAIL.COM" WITH YOUR ACTUAL BUSINESS EMAIL
-      await fetch("https://formsubmit.co/ajax/main@ownstore.org", {
+      await fetch("https://formsubmit.co/ajax/admin@ownstore.org", {
         method: "POST",
         headers: { 
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         },
         body: JSON.stringify({
-            // These fields will appear in your email
             Title: "New Order Request", 
             Name: name,
             Phone: phone,
@@ -76,42 +91,77 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      
+      {/* Quick Tags Section */}
+      {(!serviceName || serviceName === "Custom Request") && (
+        <div className="space-y-3">
+          <Label className="text-muted-foreground text-sm">Quick Select (Click to add)</Label>
+          <div className="flex flex-wrap gap-2">
+            {quickTags.map((tag) => (
+              <button
+                key={tag}
+                type="button"
+                onClick={() => addTag(tag)}
+                className="text-xs bg-secondary/50 hover:bg-primary/10 hover:text-primary border border-transparent hover:border-primary/20 transition-all rounded-full px-3 py-1.5 font-medium"
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="space-y-2">
+        <Label htmlFor="request" className="text-base font-semibold">
+          What do you need?
+        </Label>
+        <Textarea
+          id="request"
+          placeholder="e.g., I need 2 Chicken Biryanis from XYZ Restaurant..."
+          value={request}
+          onChange={(e) => setRequest(e.target.value)}
+          className="min-h-[120px] rounded-xl resize-none text-base border-2 focus-visible:ring-primary/20 focus-visible:border-primary"
+        />
+      </div>
+
       <div className="grid md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="name">Your Name</Label>
+          <Label htmlFor="name">Your Name *</Label>
           <Input
             id="name"
             placeholder="Enter your name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="rounded-xl h-12"
+            className="rounded-xl h-12 bg-secondary/20 border-transparent focus:border-input"
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="phone">Phone Number</Label> 
+          <Label htmlFor="phone">Phone Number *</Label> 
           <Input
             id="phone"
             type="tel"
             placeholder="Enter your phone number"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            className="rounded-xl h-12"
+            className="rounded-xl h-12 bg-secondary/20 border-transparent focus:border-input"
           />
         </div>
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="request">Describe Your Request</Label>
-        <Textarea
-          id="request"
-          placeholder="Please provide any additional details here..."
-          value={request}
-          onChange={(e) => setRequest(e.target.value)}
-          className="min-h-[120px] rounded-xl resize-none"
-        />
-      </div>
-      <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
-        <Send className="w-5 h-5 mr-2" />
-        {isSubmitting ? "Submitting..." : "Submit Request"}
+
+      <Button 
+        type="submit" 
+        size="lg" 
+        className="w-full h-14 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all" 
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? (
+          "Sending..."
+        ) : (
+          <>
+            <Sparkles className="w-5 h-5 mr-2" />
+            Send Request
+          </>
+        )}
       </Button>
     </form>
   );

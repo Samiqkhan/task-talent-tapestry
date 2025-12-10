@@ -11,7 +11,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"; // Import Card components
+} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -27,12 +27,10 @@ import {
   GraduationCap,
   Shield,
   Clock,
-  Users,
-  CheckCircle,
-  Star,
   Award,
   HeartHandshake,
-  Target, // Added Target icon for the mission
+  Target,
+  ShoppingBag,
 } from "lucide-react";
 
 const Index = () => {
@@ -50,17 +48,26 @@ const Index = () => {
 
       {/* Service Request Modal */}
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-        <DialogContent className="sm:max-w-[525px]">
-          <DialogHeader>
-            <DialogTitle className="text-2xl">
-              Request: {selectedService || "Custom Service"}
-            </DialogTitle>
-            <DialogDescription>
-              Please fill in your details below, and we'll connect you with a
-              professional.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="pt-4">
+        <DialogContent className="sm:max-w-[550px] p-0 overflow-hidden border-none shadow-2xl rounded-2xl">
+          {/* Header */}
+          <div className="bg-primary p-6 text-white text-center relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
+            <DialogHeader className="relative z-10">
+              <div className="mx-auto bg-white/20 w-12 h-12 rounded-full flex items-center justify-center mb-3 backdrop-blur-sm">
+                 <ShoppingBag className="w-6 h-6 text-white" />
+              </div>
+              <DialogTitle className="text-2xl font-bold text-center text-white">
+                {selectedService === "Custom Request" ? "Place an Order" : `Book ${selectedService}`}
+              </DialogTitle>
+              <DialogDescription className="text-white/80 text-center text-base">
+                {selectedService === "Custom Request" 
+                  ? "We'll handle the purchase and delivery for you." 
+                  : "Fill in the details below"}
+              </DialogDescription>
+            </DialogHeader>
+          </div>
+          
+          <div className="p-6 bg-background">
             <CustomRequestForm
               serviceName={selectedService}
               onSuccess={() => setIsFormOpen(false)}
@@ -87,17 +94,18 @@ const Index = () => {
           </h1>
 
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Your first step to finding the help you need
+            Your personal concierge for services & delivery.
           </p>
 
           <p className="text-lg text-foreground/80 mb-10 max-w-2xl mx-auto">
-            Connect with verified experts for services & consultancies. From
-            electricians to doctors, we've got you covered 24/7.
+            Connect with verified experts or order anything you need. From
+            electricians to custom deliveries, we've got you covered 24/7.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               size="lg"
+              className="rounded-full px-8 h-12 text-lg shadow-md transition-transform hover:scale-105"
               onClick={() =>
                 document
                   .getElementById("services")
@@ -109,25 +117,11 @@ const Index = () => {
             <Button
               size="lg"
               variant="outline"
+              className="rounded-full px-8 h-12 text-lg border-2"
               onClick={() => openServiceForm("Custom Request")}
             >
-              Custom Request
+              Order Anything
             </Button>
-          </div>
-
-          <div className="flex items-center justify-center gap-8 mt-12 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-primary" />
-              <span>Verified Experts</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-primary" />
-              <span>24/7 Support</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-primary" />
-              <span>Best Prices</span>
-            </div>
           </div>
         </div>
       </section>
@@ -140,8 +134,7 @@ const Index = () => {
               Top Services
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Professional help at your fingertips. Choose from our most popular
-              services.
+              Professional help at your fingertips.
             </p>
           </div>
 
@@ -170,9 +163,6 @@ const Index = () => {
             <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
               Consultancies
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Get expert advice from certified professionals.
-            </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
@@ -193,29 +183,23 @@ const Index = () => {
       </section>
 
       {/* Custom Request Section */}
-      <section id="request" className="py-20 px-4 bg-primary-lighter/20">
+      <section id="request" className="py-20 px-4 bg-secondary/30">
         <div className="container mx-auto max-w-3xl">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-              Need Something Specific?
+          <div className="text-center mb-10">
+            <h2 className="text-4xl font-bold text-foreground mb-4">
+              Anything Else?
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Can't find what you're looking for? Tell us what you need, and
-              we'll match you with the perfect professional. Whether it's flowers
-              from a specific shop, emergency repairs, or anything else - we've
-              got you covered.
+            <p className="text-lg text-muted-foreground">
+              Food, Medicine, or a special gift? We'll get it for you.
             </p>
           </div>
 
-          <div className="bg-card p-8 md:p-12 rounded-3xl border border-border shadow-xl">
-            <CustomRequestForm serviceName="Custom Request" />
-          </div>
-
-          <div className="mt-8 text-center text-sm text-muted-foreground">
-            <p>
-              We typically respond to custom requests within 30 minutes during
-              business hours.
-            </p>
+          {/* Simple, Attractive Card for the Form */}
+          <div className="bg-white dark:bg-card rounded-2xl shadow-xl overflow-hidden border border-border">
+             <div className="h-2 bg-gradient-to-r from-primary to-purple-500"></div>
+             <div className="p-8">
+                <CustomRequestForm serviceName="Custom Request" />
+             </div>
           </div>
         </div>
       </section>
@@ -224,16 +208,12 @@ const Index = () => {
       <OtherServices onServiceClick={openServiceForm} />
 
       {/* Features Section */}
-      <section className="py-20 px-4 bg-secondary/50">
+      <section className="py-20 px-4 bg-background">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
               Why Choose OWNSTORE?
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              We make it easy to find and hire the right professional for any
-              job.
-            </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -257,7 +237,7 @@ const Index = () => {
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-20 px-4 bg-background">
+      <section id="about" className="py-20 px-4 bg-secondary/20">
         <div className="container mx-auto max-w-4xl">
           <div className="text-center mb-12">
             <HeartHandshake className="w-16 h-16 text-primary mx-auto mb-6" />
@@ -267,67 +247,25 @@ const Index = () => {
           </div>
 
           <div className="space-y-6 text-lg text-foreground/80 leading-relaxed">
-            <p>
+            <p className="text-center">
               OWNSTORE is your trusted platform for connecting with verified
-              service providers and professional consultants. We understand that
-              finding reliable help for everyday tasks and specialized needs can
-              be challenging, so we've created a solution that puts quality and
-              trust first.
+              service providers and professional consultants.
             </p>
 
-            <p>
-              Our platform carefully vets every professional, from electricians
-              and plumbers to doctors and tutors, ensuring you always get the
-              best service. Whether you need immediate assistance with a
-              household emergency or expert consultation for personal growth,
-              OWNSTORE connects you with the right person at the right time.
-            </p>
-
-            {/* Added back the stats grid */}
-            {/* <div className="grid md:grid-cols-3 gap-6 my-12">
-              <div className="text-center p-6 bg-card rounded-2xl border border-border">
-                <Users className="w-12 h-12 text-primary mx-auto mb-3" />
-                <div className="text-3xl font-bold text-foreground mb-1">
-                  10,000+
-                </div>
-                <div className="text-muted-foreground">Happy Customers</div>
-              </div>
-              <div className="text-center p-6 bg-card rounded-2xl border border-border">
-                <Award className="w-12 h-12 text-primary mx-auto mb-3" />
-                <div className="text-3xl font-bold text-foreground mb-1">
-                  500+
-                </div>
-                <div className="text-muted-foreground">Verified Experts</div>
-              </div>
-              <div className="text-center p-6 bg-card rounded-2xl border border-border">
-                <Star className="w-12 h-12 text-primary mx-auto mb-3" />
-                <div className="text-3xl font-bold text-foreground mb-1">
-                  4.9/5
-                </div>
-                <div className="text-muted-foreground">Average Rating</div>
-              </div>
-            </div> */}
-
-            {/* --- THIS IS THE NEW STYLED MISSION CARD --- */}
-            <Card className="bg-primary-lighter/20 border-primary/20 shadow-lg">
-              <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-4">
-                <div className="p-3 rounded-full bg-primary/10 border border-primary/20">
-                  <Target className="w-8 h-8 text-primary" />
-                </div>
-                <CardTitle className="text-3xl font-bold text-primary">
+            <Card className="bg-background border-primary/10 shadow-lg mt-8">
+              <CardHeader className="flex flex-row items-center justify-center gap-4 pb-2">
+                <Target className="w-6 h-6 text-primary" />
+                <CardTitle className="text-2xl font-bold text-primary">
                   Our Mission
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-lg text-foreground/90 leading-relaxed">
-                  Our mission is simple to make hiring professionals as easy as
-                  a few clicks while maintaining the highest standards of quality
-                  and reliability. Join thousands of satisfied customers who
-                  trust OWNSTORE for all their service needs.
+                <p className="text-center text-lg text-foreground/90">
+                  To make hiring professionals and getting deliveries as easy as
+                  a few clicks.
                 </p>
               </CardContent>
             </Card>
-            {/* --- END OF NEW CARD --- */}
           </div>
         </div>
       </section>
