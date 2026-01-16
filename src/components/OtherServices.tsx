@@ -9,7 +9,8 @@ import {
   ShieldCheck,
   Calculator, // Added for Taxation
   Sparkles, // Added for Beautician
-  Stethoscope, // Added for Medician
+  Stethoscope,
+  Zap, // Added for Medician
 } from "lucide-react";
 
 interface OtherServicesProps {
@@ -18,13 +19,13 @@ interface OtherServicesProps {
 
 export const OtherServices = ({ onServiceClick }: OtherServicesProps) => {
   const services = [
-    { icon: ChefHat, title: "Cook", description: "Professional cooking services" },
+    { icon: Zap, title: "Electrician", description: "Expert electrical repairs and installations" },
     { icon: Hammer, title: "Carpenter", description: "Expert carpentry work" },
     { icon: PaintBucket, title: "Painter", description: "Quality painting services" },
     { icon: Wrench, title: "Mechanic", description: "Vehicle repairs" },
     { icon: Car, title: "Driver", description: "Professional driving" },
     { icon: Snowflake, title: "AC Tech", description: "AC repair & maintenance" },
-    { icon: ShieldCheck, title: "Security", description: "Security services" },
+    { icon: Wrench, title: "Plumber", description: "Fast and reliable plumbing solutions" },
     {
       icon: Calculator,
       title: "Taxation & Insurance",
