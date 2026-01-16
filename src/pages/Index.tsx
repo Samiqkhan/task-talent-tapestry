@@ -48,9 +48,11 @@ const Index = () => {
 
       {/* Service Request Modal */}
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-        <DialogContent className="sm:max-w-[550px] p-0 overflow-hidden border-none shadow-2xl rounded-2xl">
-          {/* Header */}
-          <div className="bg-primary p-6 text-white text-center relative overflow-hidden">
+        {/* UPDATED LINE BELOW: Added max-h-[90vh], flex-col, and removed global overflow-hidden */}
+        <DialogContent className="sm:max-w-[550px] max-h-[90vh] flex flex-col p-0 border-none shadow-2xl rounded-2xl">
+          
+          {/* Header - Added shrink-0 so it stays fixed at top */}
+          <div className="bg-primary p-6 text-white text-center relative overflow-hidden shrink-0 rounded-t-2xl">
             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
             <DialogHeader className="relative z-10">
               <div className="mx-auto bg-white/20 w-12 h-12 rounded-full flex items-center justify-center mb-3 backdrop-blur-sm">
@@ -67,7 +69,8 @@ const Index = () => {
             </DialogHeader>
           </div>
           
-          <div className="p-6 bg-background">
+          {/* Form Body - Added overflow-y-auto to enable scrolling */}
+          <div className="p-6 bg-background overflow-y-auto">
             <CustomRequestForm
               serviceName={selectedService}
               onSuccess={() => setIsFormOpen(false)}
