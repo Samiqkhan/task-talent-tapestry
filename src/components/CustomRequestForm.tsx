@@ -31,8 +31,8 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
   ];
 
   // Placeholder UPI details - REPLACE THESE
-  const UPI_ID = "ownstore@upi"; 
-  const QR_CODE_IMAGE = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=ownstore@upi&pn=OwnStore"; 
+  const UPI_ID = "ownstore@upic   "; 
+  const QR_CODE_IMAGE = "/Qr_code.jpeg"; 
 
   useEffect(() => {
     if (serviceName && serviceName !== "Custom Request") {
