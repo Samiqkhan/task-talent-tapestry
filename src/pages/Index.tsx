@@ -8,9 +8,9 @@ import { Footer } from "@/components/Footer";
 import { OtherServices } from "@/components/OtherServices";
 import {
   Card,
-  CardContent,
   CardHeader,
   CardTitle,
+  CardContent,
 } from "@/components/ui/card";
 import {
   Dialog,
@@ -31,28 +31,57 @@ import {
   HeartHandshake,
   Target,
   ShoppingBag,
+  Music,
 } from "lucide-react";
 
 const Index = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedService, setSelectedService] = useState("");
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const openServiceForm = (serviceTitle: string) => {
     setSelectedService(serviceTitle);
     setIsFormOpen(true);
   };
 
+  const toggleMusic = () => {
+    const audio = document.getElementById("bg-music") as HTMLAudioElement;
+    if (audio) {
+      if (isPlaying) {
+        audio.pause();
+      } else {
+        audio.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      {/* Background Music Element */}
+      <audio id="bg-music" loop>
+        <source src="/mysong.mp3" type="audio/mpeg" />
+      </audio>
+
+      {/* Floating Music Toggle Button */}
+      {/* <div className="fixed bottom-6 left-6 z-50">
+        <Button
+          onClick={toggleMusic}
+          size="icon"
+          className={`rounded-full shadow-lg w-12 h-12 transition-all ${
+            isPlaying ? "bg-primary animate-pulse" : "bg-secondary text-foreground"
+          }`}
+        >
+          <Music className={`w-6 h-6 ${isPlaying ? "animate-spin" : ""}`} />
+        </Button>
+      </div> */}
+
       <Navbar />
 
       {/* Service Request Modal */}
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-        {/* UPDATED LINE BELOW: Added max-h-[90vh], flex-col, and removed global overflow-hidden */}
-        <DialogContent className="sm:max-w-[550px] max-h-[90vh] flex flex-col p-0 border-none shadow-2xl rounded-2xl">
-          
-          {/* Header - Added shrink-0 so it stays fixed at top */}
-          <div className="bg-primary p-6 text-white text-center relative overflow-hidden shrink-0 rounded-t-2xl">
+        <DialogContent className="sm:max-w-[550px] max-h-[90vh] flex flex-col p-0 overflow-hidden border-none shadow-2xl rounded-2xl">
+          <div className="bg-primary p-6 text-white text-center relative overflow-hidden shrink-0">
             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
             <DialogHeader className="relative z-10">
               <div className="mx-auto bg-white/20 w-12 h-12 rounded-full flex items-center justify-center mb-3 backdrop-blur-sm">
@@ -69,7 +98,6 @@ const Index = () => {
             </DialogHeader>
           </div>
           
-          {/* Form Body - Added overflow-y-auto to enable scrolling */}
           <div className="p-6 bg-background overflow-y-auto">
             <CustomRequestForm
               serviceName={selectedService}
@@ -80,49 +108,19 @@ const Index = () => {
       </Dialog>
 
       {/* Hero Section */}
-      <section
-        id="home"
-        className="pt-32 pb-20 px-4 relative overflow-hidden bg-gradient-to-br from-primary-lighter/30 to-background"
-      >
-        <div className="absolute top-20 right-10 opacity-10">
-          <Zap className="w-32 h-32 text-primary" />
-        </div>
-        <div className="absolute bottom-20 left-10 opacity-10">
-          <Wrench className="w-24 h-24 text-primary" />
-        </div>
-
+      <section id="home" className="pt-32 pb-20 px-4 relative overflow-hidden bg-gradient-to-br from-primary-lighter/30 to-background">
         <div className="container mx-auto text-center max-w-4xl relative z-10">
           <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6 leading-tight">
             Welcome to <span className="text-primary">OWNSTORE</span>
           </h1>
-
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto">
             Your personal concierge for services & delivery.
           </p>
-
-          <p className="text-lg text-foreground/80 mb-10 max-w-2xl mx-auto">
-            Connect with verified experts or order anything you need. From
-            electricians to custom deliveries, we've got you covered 24/7.
-          </p>
-
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              size="lg"
-              className="rounded-full px-8 h-12 text-lg shadow-md transition-transform hover:scale-105"
-              onClick={() =>
-                document
-                  .getElementById("services")
-                  ?.scrollIntoView({ behavior: "smooth" })
-              }
-            >
+            <Button size="lg" className="rounded-full px-8 h-12 text-lg shadow-md hover:scale-105" onClick={() => document.getElementById("services")?.scrollIntoView({ behavior: "smooth" })}>
               Browse Services
             </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="rounded-full px-8 h-12 text-lg border-2"
-              onClick={() => openServiceForm("Custom Request")}
-            >
+            <Button size="lg" variant="outline" className="rounded-full px-8 h-12 text-lg border-2" onClick={() => openServiceForm("Custom Request")}>
               Order Anything
             </Button>
           </div>
@@ -133,39 +131,36 @@ const Index = () => {
       <section id="services" className="py-20 px-4 bg-background">
         <div className="container mx-auto max-w-6xl">
           {/* <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-              Top Services
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Professional help at your fingertips.
-            </p>
-          </div> */}
+            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">Top Services</h2>
+            <p className="text-muted-foreground">Professional help at transparent prices</p>
+          </div>
 
-          {/* <div className="grid md:grid-cols-3 gap-6 mb-16">
+          <div className="grid md:grid-cols-3 gap-6 mb-16">
             <ServiceCard
               icon={Zap}
               title="Electrician"
               description="Expert electrical repairs and installations"
+              price="₹199"
               onClick={() => openServiceForm("Electrician")}
             />
             <ServiceCard
               icon={Wrench}
               title="Plumber"
               description="Fast and reliable plumbing solutions"
+              price="₹149"
               onClick={() => openServiceForm("Plumber")}
             />
             <ServiceCard
               icon={Sparkles}
               title="Maid"
               description="Professional cleaning services"
+              price="₹299"
               onClick={() => openServiceForm("Maid")}
             />
           </div> */}
 
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-              Consultancies
-            </h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">Consultancies</h2>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
@@ -173,13 +168,15 @@ const Index = () => {
               icon={Stethoscope}
               title="Doctor"
               description="Medical consultation and health advice"
+              price="₹499"
               onClick={() => openServiceForm("Doctor")}
             />
             <ServiceCard
               icon={GraduationCap}
-              title="Tutor"
-              description="Career Guidance"
-              onClick={() => openServiceForm("Tutor")}
+              title="EduTech"
+              description="A full-edge educational consultancy for all your learning needs"
+              price="₹4,999"
+              onClick={() => openServiceForm("EduTech")}
             />
           </div>
         </div>
@@ -189,86 +186,24 @@ const Index = () => {
       <section id="request" className="py-20 px-4 bg-secondary/30">
         <div className="container mx-auto max-w-3xl">
           <div className="text-center mb-10">
-            <h2 className="text-4xl font-bold text-foreground mb-4">
-              Anything Else?
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              Food, Medicine, or a special gift? We'll get it for you.
-            </p>
+            <h2 className="text-4xl font-bold text-foreground mb-4">Super Pack</h2>
+            <p className="text-muted-foreground">Order food, medicine, or any custom delivery</p>
           </div>
-
-          {/* Simple, Attractive Card for the Form */}
-          <div className="bg-white dark:bg-card rounded-2xl shadow-xl overflow-hidden border border-border">
-             <div className="h-2 bg-gradient-to-r from-primary to-purple-500"></div>
-             <div className="p-8">
-                <CustomRequestForm serviceName="Custom Request" />
-             </div>
+          <div className="bg-white dark:bg-card rounded-2xl shadow-xl overflow-hidden border border-border p-8">
+             <CustomRequestForm serviceName="Custom Request" />
           </div>
         </div>
       </section>
 
-      {/* Other Services Section */}
       <OtherServices onServiceClick={openServiceForm} />
 
       {/* Features Section */}
       <section className="py-20 px-4 bg-background">
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-              Why Choose OWNSTORE?
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <FeatureCard
-              icon={Shield}
-              title="Verified Experts"
-              description="All our service providers are thoroughly vetted and verified for your safety and peace of mind."
-            />
-            <FeatureCard
-              icon={Clock}
-              title="24/7 Availability"
-              description="Need help urgently? Our platform operates round the clock to connect you with available professionals."
-            />
-            <FeatureCard
-              icon={Award}
-              title="Best Quality"
-              description="We ensure only top-rated professionals with excellent reviews join our platform."
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* About Section */}
-      <section id="about" className="py-20 px-4 bg-secondary/20">
-        <div className="container mx-auto max-w-4xl">
-          <div className="text-center mb-12">
-            <HeartHandshake className="w-16 h-16 text-primary mx-auto mb-6" />
-            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-              About OWNSTORE
-            </h2>
-          </div>
-
-          <div className="space-y-6 text-lg text-foreground/80 leading-relaxed">
-            <p className="text-center">
-              OWNSTORE is your trusted platform for connecting with verified
-              service providers and professional consultants.
-            </p>
-
-            <Card className="bg-background border-primary/10 shadow-lg mt-8">
-              <CardHeader className="flex flex-row items-center justify-center gap-4 pb-2">
-                <Target className="w-6 h-6 text-primary" />
-                <CardTitle className="text-2xl font-bold text-primary">
-                  Our Mission
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-center text-lg text-foreground/90">
-                  To make hiring professionals and getting deliveries as easy as
-                  a few clicks.
-                </p>
-              </CardContent>
-            </Card>
+          <div className="grid md:grid-cols-3 gap-8 text-center">
+            <FeatureCard icon={Shield} title="Verified Experts" description="Thoroughly vetted professionals." />
+            <FeatureCard icon={Clock} title="24/7 Availability" description="Help whenever you need it." />
+            <FeatureCard icon={Award} title="Best Quality" description="Top-rated professionals only." />
           </div>
         </div>
       </section>

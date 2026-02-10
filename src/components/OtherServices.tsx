@@ -10,7 +10,8 @@ import {
   Calculator, // Added for Taxation
   Sparkles, // Added for Beautician
   Stethoscope,
-  Zap, // Added for Medician
+  Zap,
+  Gift, // Added for Medician
 } from "lucide-react";
 
 interface OtherServicesProps {
@@ -20,12 +21,11 @@ interface OtherServicesProps {
 export const OtherServices = ({ onServiceClick }: OtherServicesProps) => {
   const services = [
     { icon: Zap, title: "Electrician", description: "Expert electrical repairs and installations" },
-    { icon: Hammer, title: "Carpenter", description: "Expert carpentry work" },
-    { icon: PaintBucket, title: "Painter", description: "Quality painting services" },
     { icon: Wrench, title: "Mechanic", description: "Vehicle repairs" },
     { icon: Car, title: "Driver", description: "Professional driving" },
     { icon: Snowflake, title: "AC Tech", description: "AC repair & maintenance" },
     { icon: Wrench, title: "Plumber", description: "Fast and reliable plumbing solutions" },
+    { icon: Gift, title: "Gift and Crafts", description: "Providing thoughtful gifts and crafts" },
     {
       icon: Calculator,
       title: "Taxation & Insurance",
@@ -38,7 +38,7 @@ export const OtherServices = ({ onServiceClick }: OtherServicesProps) => {
     },
     {
       icon: Stethoscope,
-      title: "Medician",
+      title: "Order Medicines   ",
       description: "Home medical services",
     },
   ];

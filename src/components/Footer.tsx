@@ -44,6 +44,28 @@ export const Footer = () => {
         <div className="border-t border-border mt-8 pt-8 text-center text-sm text-muted-foreground">
           <p>&copy; {new Date().getFullYear()} OWNSTORE. All rights reserved.</p>
         </div>
+        
+        {/* Credit */}
+        <div className="flex justify-center">
+          <div className="text-muted-foreground text-sm">
+            Developed by{" "}
+            <a
+              href="https://portfolio-samiq-khan.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-opacity hover:opacity-80 inline-flex items-center"
+            >
+              <span className="font-bold bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent">
+                Samiq
+              </span>
+              <span className="relative flex h-2 w-2 ml-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-pink-500"></span>
+              </span>
+            </a>
+          </div>
+        </div>
+
       </div>
     </footer>
   );
