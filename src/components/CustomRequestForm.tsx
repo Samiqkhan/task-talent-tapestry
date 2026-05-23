@@ -1,12 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { Send, Sparkles, ArrowRight, ArrowLeft, Upload, QrCode, Banknote } from "lucide-react";
+import { PhoneCall } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { cn } from "@/lib/utils";
 
 interface CustomRequestFormProps {
   serviceName?: string;
@@ -14,13 +12,12 @@ interface CustomRequestFormProps {
 }
 
 export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormProps) => {
-  const [step, setStep] = useState(1); // 1 = Details, 2 = Payment
-  const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">("online");
-  const [request, setRequest] = useState("");
+  const [items, setItems] = useState<string[]>([]);
+  const [currentItem, setCurrentItem] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   // Quick tags for users to click
   const quickTags = [
@@ -32,79 +29,79 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
     "Repair"
   ];
 
-  // Your Specific Details
-  const UPI_ID = "jonesarock79703-1@okaxis"; 
-  const QR_CODE_IMAGE = "/Qr_code.jpeg"; 
-
   useEffect(() => {
     if (serviceName && serviceName !== "Custom Request") {
-      setRequest(`I'm interested in the ${serviceName} service. `);
-    } else if (serviceName === "Custom Request") {
-      setRequest("");
+      setItems([serviceName]);
+    } else {
+      setItems([]);
     }
   }, [serviceName]);
 
   const addTag = (tag: string) => {
-    setRequest((prev) => prev ? `${prev}, ${tag}` : `I need ${tag}`);
+    if (!items.includes(tag)) {
+      setItems((prev) => [...prev, tag]);
+    }
   };
 
-  const handleNext = (e: React.FormEvent) => {
+  const addItem = () => {
+    if (currentItem.trim()) {
+      if (!items.includes(currentItem.trim())) {
+        setItems([...items, currentItem.trim()]);
+      }
+      setCurrentItem("");
+    }
+  };
+
+  const removeItem = (indexToRemove: number) => {
+    setItems(items.filter((_, index) => index !== indexToRemove));
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addItem();
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!request.trim() || !name.trim() || !phone.trim()) {
-      toast.error("Please fill in all fields first");
+
+    if (items.length === 0 && !currentItem.trim()) {
+      toast.error("Please add at least one item to your request");
       return;
     }
-    setStep(2);
-  };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
+    // Include the current typed item if they forgot to press Enter/+
+    let finalItems = [...items];
+    if (currentItem.trim() && !finalItems.includes(currentItem.trim())) {
+      finalItems.push(currentItem.trim());
+      setItems(finalItems);
+      setCurrentItem("");
     }
-  };
 
-  const handleSubmit = async () => {
-    // Only require file if payment is online
-    if (paymentMethod === "online" && !file) {
-      toast.error("Please upload the payment screenshot");
+    if (!name.trim() || !phone.trim()) {
+      toast.error("Please fill in your name and phone number");
       return;
     }
 
     setIsSubmitting(true);
+    const compiledRequest = finalItems.join(", ");
+
     try {
-      let publicUrl = null;
-
-      // 1. Upload Image only if Online Payment is selected
-      if (paymentMethod === "online" && file) {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Date.now()}.${fileExt}`;
-        const { error: uploadError } = await supabase.storage
-          .from('payment_uploads')
-          .upload(fileName, file);
-
-        if (uploadError) throw uploadError;
-
-        const { data: { publicUrl: url } } = supabase.storage
-          .from('payment_uploads')
-          .getPublicUrl(fileName);
-        
-        publicUrl = url;
-      }
-
-      // 2. Save to Database
+      // 1. Save to Database
       const { error: dbError } = await supabase
         .from("custom_requests")
         .insert([{ 
           name, 
           phone, 
-          request: request || serviceName || "General Inquiry",
-          payment_screenshot_url: publicUrl,
-          status: paymentMethod === "cod" ? "COD - Pending" : "Online - Pending"
+          request: compiledRequest || "General Inquiry",
+          payment_screenshot_url: null,
+          status: "Order Placed"
         }]);
 
       if (dbError) throw dbError;
 
-      // 3. Send Email
+      // 2. Send Email
       await fetch("https://formsubmit.co/ajax/main@ownstore.org", {
         method: "POST",
         headers: { 
@@ -112,23 +109,16 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
             'Accept': 'application/json'
         },
         body: JSON.stringify({
-            Title: "New Order Request", 
-            PaymentMethod: paymentMethod.toUpperCase(),
+            Title: "New Order Request (No Payment)", 
             Name: name,
             Phone: phone,
-            Request: request,
-            PaymentProof: publicUrl || "N/A (Cash on Delivery)"
+            Request: compiledRequest,
+            CallInstruction: "For further order, call on +91 63823 68791"
         })
       });
 
-      toast.success("Request submitted successfully!");
-      
-      // Reset Form
-      setRequest("");
-      setName("");
-      setPhone("");
-      setFile(null);
-      setStep(1);
+      toast.success("Order submitted successfully!");
+      setIsSubmitted(true);
       onSuccess?.();
 
     } catch (error: any) {
@@ -141,182 +131,155 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
     }
   };
 
-  return (
-    <div className="space-y-6">
-      
-      {/* STEP 1: DETAILS */}
-      {step === 1 && (
-        <form onSubmit={handleNext} className="space-y-6 animate-in fade-in slide-in-from-left-4 duration-300">
-          
-          {(!serviceName || serviceName === "Custom Request") && (
-            <div className="space-y-3">
-              <Label className="text-muted-foreground text-sm">Quick Select</Label>
-              <div className="flex flex-wrap gap-2">
-                {quickTags.map((tag) => (
-                  <button
-                    key={tag}
-                    type="button"
-                    onClick={() => addTag(tag)}
-                    className="text-xs bg-secondary/50 hover:bg-primary/10 hover:text-primary border border-transparent hover:border-primary/20 transition-all rounded-full px-3 py-1.5 font-medium"
-                  >
-                    {tag}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div className="space-y-2">
-            <Label htmlFor="request" className="text-base font-semibold">What do you need?</Label>
-            <Textarea
-              id="request"
-              placeholder="e.g., I need 2 Chicken Biryanis..."
-              value={request}
-              onChange={(e) => setRequest(e.target.value)}
-              className="min-h-[120px] rounded-xl resize-none text-base border-2 focus-visible:ring-primary/20 focus-visible:border-primary"
-            />
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Your Name *</Label>
-              <Input
-                id="name"
-                required
-                placeholder="Enter your name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="rounded-xl h-12 bg-secondary/20 border-transparent focus:border-input"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number *</Label> 
-              <Input
-                id="phone"
-                required
-                type="tel"
-                placeholder="Enter your phone number"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="rounded-xl h-12 bg-secondary/20 border-transparent focus:border-input"
-              />
-            </div>
-          </div>
-
-          <Button 
-            type="submit" 
-            size="lg" 
-            className="w-full h-14 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all"
+  if (isSubmitted) {
+    return (
+      <div className="text-center py-8 px-4 space-y-6 animate-in fade-in duration-300">
+        <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center mx-auto shadow-inner">
+          <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <div className="space-y-2">
+          <h3 className="text-2xl font-bold text-foreground">Order Placed!</h3>
+          <p className="text-muted-foreground">
+            Thank you for ordering with OWNSTORE. We are processing your request.
+          </p>
+        </div>
+        
+        <div className="bg-primary/5 rounded-2xl p-6 border border-primary/10 space-y-3">
+          <p className="text-sm text-muted-foreground">For further orders or urgent updates, call us:</p>
+          <a 
+            href="tel:+916382368791" 
+            className="text-xl font-bold text-primary hover:underline flex items-center justify-center gap-2 transition-all hover:scale-105"
           >
-            Next: Payment
-            <ArrowRight className="w-5 h-5 ml-2" />
-          </Button>
-        </form>
-      )}
+            <PhoneCall className="w-5 h-5" />
+            +91 63823 68791
+          </a>
+        </div>
 
-      {/* STEP 2: PAYMENT */}
-      {step === 2 && (
-        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-          
-          {/* Payment Method Selector */}
-          <div className="flex p-1 bg-secondary rounded-xl gap-1">
-            <button 
-              onClick={() => setPaymentMethod("online")}
-              className={cn(
-                "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all",
-                paymentMethod === "online" ? "bg-white shadow-sm text-primary" : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              <QrCode className="w-4 h-4" /> Online
-            </button>
-            <button 
-              onClick={() => setPaymentMethod("cod")}
-              className={cn(
-                "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all",
-                paymentMethod === "cod" ? "bg-white shadow-sm text-primary" : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              <Banknote className="w-4 h-4" /> Cash on Delivery
-            </button>
-          </div>
+        <Button 
+          type="button"
+          onClick={() => {
+            setIsSubmitted(false);
+            setItems([]);
+            setName("");
+            setPhone("");
+          }}
+          className="w-full h-12 rounded-xl"
+        >
+          Place Another Order
+        </Button>
+      </div>
+    );
+  }
 
-          {paymentMethod === "online" ? (
-            <div className="space-y-6 animate-in zoom-in-95 duration-200">
-              <div className="text-center space-y-4 bg-secondary/20 p-6 rounded-2xl border border-dashed border-primary/30">
-                <h3 className="font-semibold text-lg">Scan & Pay</h3>
-                <div className="bg-white p-3 w-fit mx-auto rounded-lg shadow-sm">
-                  <img 
-                    src={QR_CODE_IMAGE} 
-                    alt="Payment QR" 
-                    className="w-40 h-40 object-contain"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">UPI ID</p>
-                  <div className="font-mono bg-background py-2 px-4 rounded-md border inline-flex items-center gap-2">
-                    <QrCode className="w-4 h-4 text-primary" />
-                    {UPI_ID}
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <Label htmlFor="screenshot">Upload Payment Screenshot *</Label>
-                <div className="flex items-center justify-center w-full">
-                  <label htmlFor="screenshot" className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl cursor-pointer hover:bg-secondary/50 transition-colors border-muted-foreground/25">
-                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <Upload className="w-8 h-8 mb-3 text-muted-foreground" />
-                      <p className="text-sm text-muted-foreground">
-                        {file ? <span className="text-primary font-semibold">{file.name}</span> : "Click to upload screenshot"}
-                      </p>
-                    </div>
-                    <Input 
-                      id="screenshot" 
-                      type="file" 
-                      accept="image/*"
-                      className="hidden" 
-                      onChange={handleFileChange}
-                    />
-                  </label>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="p-8 text-center bg-secondary/20 rounded-2xl border border-dashed border-primary/30 animate-in zoom-in-95 duration-200">
-              <div className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto mb-4">
-                <Banknote className="w-8 h-8" />
-              </div>
-              <h3 className="font-bold text-xl mb-2">Cash on Delivery</h3>
-              <p className="text-muted-foreground">
-                Pay in cash directly to our delivery executive when you receive your order.
-              </p>
-            </div>
-          )}
-
-          <div className="flex gap-3 pt-2">
-            <Button 
-              variant="outline" 
-              onClick={() => setStep(1)}
-              className="flex-1 h-12 rounded-xl"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
-            <Button 
-              onClick={handleSubmit}
-              disabled={isSubmitting}
-              className="flex-[2] h-12 rounded-xl text-lg shadow-lg hover:shadow-xl transition-all"
-            >
-              {isSubmitting ? "Submitting..." : (
-                <>
-                  <Sparkles className="w-5 h-5 mr-2" />
-                  {paymentMethod === "cod" ? "Place COD Order" : "Confirm Order"}
-                </>
-              )}
-            </Button>
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6 animate-in fade-in duration-300">
+      
+      {(!serviceName || serviceName === "Custom Request") && (
+        <div className="space-y-3">
+          <Label className="text-muted-foreground text-sm">Quick Select</Label>
+          <div className="flex flex-wrap gap-2">
+            {quickTags.map((tag) => (
+              <button
+                key={tag}
+                type="button"
+                onClick={() => addTag(tag)}
+                className="text-xs bg-secondary/50 hover:bg-primary/10 hover:text-primary border border-transparent hover:border-primary/20 transition-all rounded-full px-3 py-1.5 font-medium"
+              >
+                {tag}
+              </button>
+            ))}
           </div>
         </div>
       )}
-    </div>
+
+      <div className="space-y-3">
+        <Label htmlFor="item-input" className="text-base font-semibold">What do you need?</Label>
+        <div className="flex gap-2">
+          <Input
+            id="item-input"
+            type="text"
+            placeholder='Type an item (e.g. "chicken", "rice") and press Enter'
+            value={currentItem}
+            onChange={(e) => setCurrentItem(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="rounded-xl h-12 bg-secondary/20 border-transparent focus:border-input flex-1"
+          />
+          <Button 
+            type="button" 
+            onClick={addItem}
+            className="rounded-xl h-12 px-4 bg-primary text-white hover:bg-primary/90 font-bold text-lg"
+          >
+            +
+          </Button>
+        </div>
+
+        {/* List of items */}
+        {items.length > 0 && (
+          <div className="flex flex-wrap gap-2 pt-2">
+            {items.map((item, index) => (
+              <span 
+                key={index} 
+                className="inline-flex items-center gap-1.5 bg-primary/10 text-primary border border-primary/20 rounded-full px-3 py-1.5 text-sm font-medium animate-fade-in"
+              >
+                {item}
+                <button
+                  type="button"
+                  onClick={() => removeItem(index)}
+                  className="w-4 h-4 rounded-full flex items-center justify-center hover:bg-primary/20 transition-colors text-xs font-bold text-primary"
+                >
+                  &times;
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="name">Your Name *</Label>
+          <Input
+            id="name"
+            required
+            placeholder="Enter your name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="rounded-xl h-12 bg-secondary/20 border-transparent focus:border-input"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="phone">Phone Number *</Label> 
+          <Input
+            id="phone"
+            required
+            type="tel"
+            placeholder="Enter your phone number"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className="rounded-xl h-12 bg-secondary/20 border-transparent focus:border-input"
+          />
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <Button 
+          type="submit" 
+          disabled={isSubmitting}
+          size="lg" 
+          className="w-full h-14 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all"
+        >
+          {isSubmitting ? "Placing Order..." : "Place Order"}
+        </Button>
+
+        <div className="text-center py-3 bg-secondary/35 rounded-xl border border-border">
+          <p className="text-xs text-muted-foreground">For further orders or support, call us at:</p>
+          <a href="tel:+916382368791" className="text-sm font-bold text-primary hover:underline">
+            +91 63823 68791
+          </a>
+        </div>
+      </div>
+    </form>
   );
 };

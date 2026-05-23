@@ -13,7 +13,7 @@ export const Footer = () => {
           <div>
             <h4 className="font-semibold text-foreground mb-4">Quick Links</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#home" className="hover:text-primary transition-colors">Home</a></li>
+              <li><a href="#" className="hover:text-primary transition-colors">Home</a></li>
               <li><a href="#services" className="hover:text-primary transition-colors">Services</a></li>
               <li><a href="#about" className="hover:text-primary transition-colors">About Us</a></li>
               <li><a href="#request" className="hover:text-primary transition-colors">Custom Request</a></li>

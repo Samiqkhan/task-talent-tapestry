@@ -1,17 +1,9 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { ServiceCard } from "@/components/ServiceCard";
 import { FeatureCard } from "@/components/FeatureCard";
 import { CustomRequestForm } from "@/components/CustomRequestForm";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { OtherServices } from "@/components/OtherServices";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -20,18 +12,10 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import {
-  Zap,
-  Wrench,
-  Sparkles,
-  Stethoscope,
-  GraduationCap,
   Shield,
   Clock,
   Award,
-  HeartHandshake,
-  Target,
   ShoppingBag,
-  Music,
 } from "lucide-react";
 
 const Index = () => {
@@ -106,84 +90,8 @@ const Index = () => {
           </div>
         </DialogContent>
       </Dialog>
-
-      {/* Hero Section */}
-      <section id="home" className="pt-32 pb-20 px-4 relative overflow-hidden bg-gradient-to-br from-primary-lighter/30 to-background">
-        <div className="container mx-auto text-center max-w-4xl relative z-10">
-          <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6 leading-tight">
-            Welcome to <span className="text-primary">OWNSTORE</span>
-          </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Your personal concierge for services & delivery.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="rounded-full px-8 h-12 text-lg shadow-md hover:scale-105" onClick={() => document.getElementById("services")?.scrollIntoView({ behavior: "smooth" })}>
-              Browse Services
-            </Button>
-            <Button size="lg" variant="outline" className="rounded-full px-8 h-12 text-lg border-2" onClick={() => openServiceForm("Custom Request")}>
-              Order Anything
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Services Section */}
-      <section id="services" className="py-20 px-4 bg-background">
-        <div className="container mx-auto max-w-6xl">
-          {/* <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">Top Services</h2>
-            <p className="text-muted-foreground">Professional help at transparent prices</p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6 mb-16">
-            <ServiceCard
-              icon={Zap}
-              title="Electrician"
-              description="Expert electrical repairs and installations"
-              price="₹199"
-              onClick={() => openServiceForm("Electrician")}
-            />
-            <ServiceCard
-              icon={Wrench}
-              title="Plumber"
-              description="Fast and reliable plumbing solutions"
-              price="₹149"
-              onClick={() => openServiceForm("Plumber")}
-            />
-            <ServiceCard
-              icon={Sparkles}
-              title="Maid"
-              description="Professional cleaning services"
-              price="₹299"
-              onClick={() => openServiceForm("Maid")}
-            />
-          </div> */}
-
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">Consultancies</h2>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-            <ServiceCard
-              icon={Stethoscope}
-              title="Doctor"
-              description="Medical consultation and health advice"
-              price="₹499"
-              onClick={() => openServiceForm("Doctor")}
-            />
-            <ServiceCard
-              icon={GraduationCap}
-              title="EduTech"
-              description="A full-edge educational consultancy for all your learning needs"
-              price="₹4,999"
-              onClick={() => openServiceForm("EduTech")}
-            />
-          </div>
-        </div>
-      </section>
-
       {/* Custom Request Section */}
-      <section id="request" className="py-20 px-4 bg-secondary/30">
+      <section id="request" className="pt-32 pb-20 px-4 bg-secondary/30">
         <div className="container mx-auto max-w-3xl">
           <div className="text-center mb-10">
             <h2 className="text-4xl font-bold text-foreground mb-4">Super Pack</h2>
@@ -195,7 +103,9 @@ const Index = () => {
         </div>
       </section>
 
-      <OtherServices onServiceClick={openServiceForm} />
+      <div id="services" className="scroll-mt-20">
+        <OtherServices onServiceClick={openServiceForm} />
+      </div>
 
       {/* Features Section */}
       <section className="py-20 px-4 bg-background">
