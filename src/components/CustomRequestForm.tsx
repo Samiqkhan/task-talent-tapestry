@@ -16,7 +16,8 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
   const [currentItem, setCurrentItem] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
+  const [addressLine1, setAddressLine1] = useState("");
+  const [addressLine2, setAddressLine2] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -68,13 +69,16 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
       setCurrentItem("");
     }
 
-    if (!name.trim() || !phone.trim() || !address.trim()) {
-      toast.error("Please fill in your name, phone number, and address");
+    if (!name.trim() || !phone.trim() || !addressLine1.trim()) {
+      toast.error("Please fill in your name, phone number, and address line 1");
       return;
     }
 
     setIsSubmitting(true);
-    const compiledRequest = `${finalItems.join(", ")} | Address: ${address}`;
+    const fullAddress = addressLine2.trim() 
+      ? `${addressLine1.trim()}, ${addressLine2.trim()}`
+      : addressLine1.trim();
+    const compiledRequest = `${finalItems.join(", ")} | Address: ${fullAddress}`;
 
     try {
       // 1. Save to Database
@@ -153,7 +157,8 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
             setItems([]);
             setName("");
             setPhone("");
-            setAddress("");
+            setAddressLine1("");
+            setAddressLine2("");
           }}
           className="w-full h-12 rounded-xl"
         >
@@ -175,7 +180,7 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
             <Input
               id="item-input"
               type="text"
-              placeholder='Type an item (e.g. "chicken", "rice") and press Enter'
+              placeholder='Type an item (e.g. "oil", "masala") and press Enter'
               value={currentItem}
               onChange={(e) => setCurrentItem(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -239,16 +244,28 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="address">Address *</Label> 
-        <Input
-          id="address"
-          required
-          placeholder="Enter your full address"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          className="rounded-xl h-12 bg-secondary/20 border-transparent focus:border-input"
-        />
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="addressLine1">Address Line 1 *</Label> 
+          <Input
+            id="addressLine1"
+            required
+            placeholder="Street address, P.O. box, company name"
+            value={addressLine1}
+            onChange={(e) => setAddressLine1(e.target.value)}
+            className="rounded-xl h-12 bg-secondary/20 border-transparent focus:border-input"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="addressLine2">Address Line 2</Label> 
+          <Input
+            id="addressLine2"
+            placeholder="Apartment, suite, unit, building, floor, etc. (optional)"
+            value={addressLine2}
+            onChange={(e) => setAddressLine2(e.target.value)}
+            className="rounded-xl h-12 bg-secondary/20 border-transparent focus:border-input"
+          />
+        </div>
       </div>
 
       <div className="space-y-4">
