@@ -4,7 +4,7 @@ export const Footer = () => {
       <div className="container mx-auto px-4 py-12">
         <div className="grid md:grid-cols-4 gap-8">
           <div className="space-y-4">
-            <h3 className="text-xl font-bold text-primary">OWNSTORE</h3>
+            <h3 className="text-xl font-bold text-primary">Annu Domain Exports</h3>
             <p className="text-sm text-muted-foreground">
               Your trusted platform for connecting with verified service providers and consultants.
             </p>
@@ -23,18 +23,15 @@ export const Footer = () => {
           <div>
             <h4 className="font-semibold text-foreground mb-4">Services</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>Electrician</li>
-              <li>Plumber</li>
-              <li>Maid Services</li>
-              <li>Doctor Consultation</li>
-              <li>Tutor Services</li>
+              <li>Taxation</li>
+              <li>Health Consultation</li>
             </ul>
           </div>
           
           <div>
             <h4 className="font-semibold text-foreground mb-4">Contact</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>Email: main@ownstore.com</li>
+              <li>Email: main@annudomainexports.com</li>
               <li>Phone: +91 6382 368 791</li>
               <li>Hours: 24/7 Support</li>
             </ul>
@@ -42,7 +39,7 @@ export const Footer = () => {
         </div>
         
         <div className="border-t border-border mt-8 pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} OWNSTORE. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Annu Domain Exports. All rights reserved.</p>
         </div>
         
         {/* Credit */}

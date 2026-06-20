@@ -37,7 +37,7 @@ const Login = () => {
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center text-primary">
-            OWNSTORE Admin
+            Annu Domain Exports Admin
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -47,7 +47,7 @@ const Login = () => {
               <Input
                 id="email"
                 type="email"
-                placeholder="admin@ownstore.com"
+                placeholder="admin@annudomainexports.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required

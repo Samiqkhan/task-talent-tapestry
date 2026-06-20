@@ -130,7 +130,7 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
         <div className="space-y-2">
           <h3 className="text-2xl font-bold text-foreground">Order Placed!</h3>
           <p className="text-muted-foreground">
-            Thank you for ordering with OWNSTORE. We are processing your request.
+            Thank you for ordering with Annu Domain Exports. We are processing your request.
           </p>
         </div>
         
