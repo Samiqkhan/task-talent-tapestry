@@ -244,13 +244,6 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
         >
           {isSubmitting ? "Placing Order..." : "Place Order"}
         </Button>
-
-        <div className="text-center py-3 bg-secondary/35 rounded-xl border border-border">
-          <p className="text-xs text-muted-foreground">For further orders or support, call us at:</p>
-          <a href="tel:+916382368791" className="text-sm font-bold text-primary hover:underline">
-            +91 63823 68791
-          </a>
-        </div>
       </div>
     </form>
   );
