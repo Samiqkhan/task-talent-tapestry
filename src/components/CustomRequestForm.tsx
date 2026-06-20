@@ -87,6 +87,7 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
         .insert([{ 
           name, 
           phone, 
+          address: fullAddress,
           request: compiledRequest || "General Inquiry",
           payment_screenshot_url: null,
           status: "Order Placed"

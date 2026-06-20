@@ -19,6 +19,7 @@ interface CustomRequest {
   id: string;
   name: string;
   phone: string;
+  address?: string | null;
   request: string;
   status: string;
   created_at: string;
@@ -157,6 +158,11 @@ const Admin = () => {
                     <TableCell>
                       <div className="font-medium">{req.name}</div>
                       <div className="text-sm text-muted-foreground">{req.phone}</div>
+                      {req.address && (
+                        <div className="text-xs text-muted-foreground mt-1 max-w-[200px] truncate" title={req.address}>
+                          {req.address}
+                        </div>
+                      )}
                     </TableCell>
                     <TableCell className="text-sm">{req.request}</TableCell>
                     
