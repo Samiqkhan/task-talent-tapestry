@@ -1,18 +1,5 @@
 import { ServiceCard } from "@/components/ServiceCard";
-import {
-  ChefHat,
-  Hammer,
-  PaintBucket,
-  Wrench,
-  Car,
-  Snowflake,
-  ShieldCheck,
-  Calculator, // Added for Taxation
-  Sparkles, // Added for Beautician
-  Stethoscope,
-  Zap,
-  Gift, // Added for Medician
-} from "lucide-react";
+import { Calculator, Stethoscope } from "lucide-react";
 
 interface OtherServicesProps {
   onServiceClick: (serviceName: string) => void;
@@ -20,26 +7,15 @@ interface OtherServicesProps {
 
 export const OtherServices = ({ onServiceClick }: OtherServicesProps) => {
   const services = [
-    { icon: Zap, title: "Electrician", description: "Expert electrical repairs and installations" },
-    { icon: Wrench, title: "Mechanic", description: "Vehicle repairs" },
-    { icon: Car, title: "Driver", description: "Professional driving" },
-    { icon: Snowflake, title: "AC Tech", description: "AC repair & maintenance" },
-    { icon: Wrench, title: "Plumber", description: "Fast and reliable plumbing solutions" },
-    { icon: Gift, title: "Gift and Crafts", description: "Providing thoughtful gifts and crafts" },
     {
       icon: Calculator,
-      title: "Taxation & Insurance",
-      description: "Tax and insurance filing",
-    },
-    {
-      icon: Sparkles,
-      title: "Beautician",
-      description: "Beauty & salon services",
+      title: "Taxation",
+      description: "Professional tax and financial consultation",
     },
     {
       icon: Stethoscope,
-      title: "Order Medicines   ",
-      description: "Home medical services",
+      title: "Health Consultation",
+      description: "Get professional medical advice and consultation",
     },
   ];
 

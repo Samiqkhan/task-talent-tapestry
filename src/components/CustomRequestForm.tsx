@@ -19,15 +19,7 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  // Quick tags for users to click
-  const quickTags = [
-    "Food Delivery", 
-    "Medicine", 
-    "Gift Pickup", 
-    "House Cleaning",
-    "Courier",
-    "Repair"
-  ];
+
 
   useEffect(() => {
     if (serviceName && serviceName !== "Custom Request") {
@@ -37,11 +29,7 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
     }
   }, [serviceName]);
 
-  const addTag = (tag: string) => {
-    if (!items.includes(tag)) {
-      setItems((prev) => [...prev, tag]);
-    }
-  };
+
 
   const addItem = () => {
     if (currentItem.trim()) {
@@ -176,23 +164,7 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
   return (
     <form onSubmit={handleSubmit} className="space-y-6 animate-in fade-in duration-300">
       
-      {(!serviceName || serviceName === "Custom Request") && (
-        <div className="space-y-3">
-          <Label className="text-muted-foreground text-sm">Quick Select</Label>
-          <div className="flex flex-wrap gap-2">
-            {quickTags.map((tag) => (
-              <button
-                key={tag}
-                type="button"
-                onClick={() => addTag(tag)}
-                className="text-xs bg-secondary/50 hover:bg-primary/10 hover:text-primary border border-transparent hover:border-primary/20 transition-all rounded-full px-3 py-1.5 font-medium"
-              >
-                {tag}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+
 
       <div className="space-y-3">
         <Label htmlFor="item-input" className="text-base font-semibold">What do you need?</Label>
