@@ -137,7 +137,7 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
       successMessage = "Our doctor will connect with you soon on WhatsApp.";
     } else if (isTaxation) {
       successTitle = "Booking Confirmed!";
-      successMessage = "Our taxation expert will connect with you soon.";
+      successMessage = "Our tax consultant will connect with you soon on WhatsApp.";
     }
 
     return (
