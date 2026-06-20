@@ -125,6 +125,20 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
   };
 
   if (isSubmitted) {
+    const isHealthConsult = serviceName === "Health Consultation";
+    const isTaxation = serviceName === "Taxation";
+    
+    let successTitle = "Order Placed!";
+    let successMessage = "Thank you for ordering with Annu Domain Exports. We are processing your request.";
+    
+    if (isHealthConsult) {
+      successTitle = "Booking Confirmed!";
+      successMessage = "Our doctor will connect with you soon on WhatsApp.";
+    } else if (isTaxation) {
+      successTitle = "Booking Confirmed!";
+      successMessage = "Our taxation expert will connect with you soon.";
+    }
+
     return (
       <div className="text-center py-8 px-4 space-y-6 animate-in fade-in duration-300">
         <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center mx-auto shadow-inner">
@@ -133,9 +147,9 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
           </svg>
         </div>
         <div className="space-y-2">
-          <h3 className="text-2xl font-bold text-foreground">Order Placed!</h3>
+          <h3 className="text-2xl font-bold text-foreground">{successTitle}</h3>
           <p className="text-muted-foreground">
-            Thank you for ordering with Annu Domain Exports. We are processing your request.
+            {successMessage}
           </p>
         </div>
         
@@ -162,7 +176,7 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
           }}
           className="w-full h-12 rounded-xl"
         >
-          Place Another Order
+          {(!serviceName || serviceName === "Custom Request") ? "Place Another Order" : "Book Another Service"}
         </Button>
       </div>
     );
