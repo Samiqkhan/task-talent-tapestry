@@ -168,48 +168,50 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
       
 
 
-      <div className="space-y-3">
-        <Label htmlFor="item-input" className="text-base font-semibold">What do you need?</Label>
-        <div className="flex gap-2">
-          <Input
-            id="item-input"
-            type="text"
-            placeholder='Type an item (e.g. "chicken", "rice") and press Enter'
-            value={currentItem}
-            onChange={(e) => setCurrentItem(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className="rounded-xl h-12 bg-secondary/20 border-transparent focus:border-input flex-1"
-          />
-          <Button 
-            type="button" 
-            onClick={addItem}
-            className="rounded-xl h-12 px-4 bg-primary text-white hover:bg-primary/90 font-bold text-lg"
-          >
-            +
-          </Button>
-        </div>
-
-        {/* List of items */}
-        {items.length > 0 && (
-          <div className="flex flex-wrap gap-2 pt-2">
-            {items.map((item, index) => (
-              <span 
-                key={index} 
-                className="inline-flex items-center gap-1.5 bg-primary/10 text-primary border border-primary/20 rounded-full px-3 py-1.5 text-sm font-medium animate-fade-in"
-              >
-                {item}
-                <button
-                  type="button"
-                  onClick={() => removeItem(index)}
-                  className="w-4 h-4 rounded-full flex items-center justify-center hover:bg-primary/20 transition-colors text-xs font-bold text-primary"
-                >
-                  &times;
-                </button>
-              </span>
-            ))}
+      {(!serviceName || serviceName === "Custom Request") && (
+        <div className="space-y-3">
+          <Label htmlFor="item-input" className="text-base font-semibold">What do you need?</Label>
+          <div className="flex gap-2">
+            <Input
+              id="item-input"
+              type="text"
+              placeholder='Type an item (e.g. "chicken", "rice") and press Enter'
+              value={currentItem}
+              onChange={(e) => setCurrentItem(e.target.value)}
+              onKeyDown={handleKeyDown}
+              className="rounded-xl h-12 bg-secondary/20 border-transparent focus:border-input flex-1"
+            />
+            <Button 
+              type="button" 
+              onClick={addItem}
+              className="rounded-xl h-12 px-4 bg-primary text-white hover:bg-primary/90 font-bold text-lg"
+            >
+              +
+            </Button>
           </div>
-        )}
-      </div>
+
+          {/* List of items */}
+          {items.length > 0 && (
+            <div className="flex flex-wrap gap-2 pt-2">
+              {items.map((item, index) => (
+                <span 
+                  key={index} 
+                  className="inline-flex items-center gap-1.5 bg-primary/10 text-primary border border-primary/20 rounded-full px-3 py-1.5 text-sm font-medium animate-fade-in"
+                >
+                  {item}
+                  <button
+                    type="button"
+                    onClick={() => removeItem(index)}
+                    className="w-4 h-4 rounded-full flex items-center justify-center hover:bg-primary/20 transition-colors text-xs font-bold text-primary"
+                  >
+                    &times;
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="grid md:grid-cols-2 gap-4">
         <div className="space-y-2">
@@ -256,7 +258,9 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
           size="lg" 
           className="w-full h-14 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all"
         >
-          {isSubmitting ? "Placing Order..." : "Place Order"}
+          {isSubmitting 
+            ? "Submitting..." 
+            : (!serviceName || serviceName === "Custom Request" ? "Place Order" : "Book Service")}
         </Button>
       </div>
     </form>
