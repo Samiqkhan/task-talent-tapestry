@@ -16,6 +16,7 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
   const [currentItem, setCurrentItem] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -67,13 +68,13 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
       setCurrentItem("");
     }
 
-    if (!name.trim() || !phone.trim()) {
-      toast.error("Please fill in your name and phone number");
+    if (!name.trim() || !phone.trim() || !address.trim()) {
+      toast.error("Please fill in your name, phone number, and address");
       return;
     }
 
     setIsSubmitting(true);
-    const compiledRequest = finalItems.join(", ");
+    const compiledRequest = `${finalItems.join(", ")} | Address: ${address}`;
 
     try {
       // 1. Save to Database
@@ -152,6 +153,7 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
             setItems([]);
             setName("");
             setPhone("");
+            setAddress("");
           }}
           className="w-full h-12 rounded-xl"
         >
@@ -233,6 +235,18 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
             className="rounded-xl h-12 bg-secondary/20 border-transparent focus:border-input"
           />
         </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="address">Address *</Label> 
+        <Input
+          id="address"
+          required
+          placeholder="Enter your full address"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          className="rounded-xl h-12 bg-secondary/20 border-transparent focus:border-input"
+        />
       </div>
 
       <div className="space-y-4">
