@@ -107,7 +107,7 @@ const Index = () => {
             Welcome to <span className="bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">Annu Domain Export</span>
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto font-medium animate-in slide-in-from-top-12 duration-700">
-            Your premium gateway for verified professional services. Seamlessly manage taxation filing and connect with certified health consultants.
+            You can get the groceries you wanted monthly. Seamlessly manage taxation filing and connect with certified health consultants.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4 pt-4 animate-in slide-in-from-bottom-8 duration-1000">
             <Button 
