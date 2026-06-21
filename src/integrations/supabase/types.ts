@@ -22,6 +22,7 @@ export type Database = {
           name: string
           request: string
           address: string | null
+          delivery_date: string | null
           status: string | null
           assigned_to: string | null // <--- ADDED THIS
           updated_at: string
@@ -33,6 +34,7 @@ export type Database = {
           name: string
           request: string
           address?: string | null
+          delivery_date?: string | null
           status?: string | null
           assigned_to?: string | null // <--- ADDED THIS
           updated_at?: string
@@ -44,6 +46,7 @@ export type Database = {
           name?: string
           request?: string
           address?: string | null
+          delivery_date?: string | null
           status?: string | null
           assigned_to?: string | null // <--- ADDED THIS
           updated_at?: string

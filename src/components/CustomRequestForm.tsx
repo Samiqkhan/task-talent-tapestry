@@ -18,6 +18,7 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
   const [phone, setPhone] = useState("");
   const [addressLine1, setAddressLine1] = useState("");
   const [addressLine2, setAddressLine2] = useState("");
+  const [deliveryDate, setDeliveryDate] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -69,8 +70,8 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
       setCurrentItem("");
     }
 
-    if (!name.trim() || !phone.trim() || !addressLine1.trim()) {
-      toast.error("Please fill in your name, phone number, and address line 1");
+    if (!name.trim() || !phone.trim() || !addressLine1.trim() || !deliveryDate) {
+      toast.error("Please fill in all required fields (Name, Phone, Address, and Delivery Date)");
       return;
     }
 
@@ -78,7 +79,7 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
     const fullAddress = addressLine2.trim() 
       ? `${addressLine1.trim()}, ${addressLine2.trim()}`
       : addressLine1.trim();
-    const compiledRequest = `${finalItems.join(", ")} | Address: ${fullAddress}`;
+    const compiledRequest = `${finalItems.join(", ")} | Address: ${fullAddress} | Delivery Date: ${deliveryDate}`;
 
     try {
       // 1. Save to Database
@@ -88,6 +89,7 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
           name, 
           phone, 
           address: fullAddress,
+          delivery_date: deliveryDate,
           request: compiledRequest || "General Inquiry",
           payment_screenshot_url: null,
           status: "Order Placed"
@@ -174,6 +176,7 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
             setPhone("");
             setAddressLine1("");
             setAddressLine2("");
+            setDeliveryDate("");
           }}
           className="w-full h-12 rounded-xl"
         >
@@ -281,6 +284,19 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
             className="rounded-xl h-12 bg-secondary/20 border-transparent focus:border-input"
           />
         </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="deliveryDate">Preferred Delivery Date *</Label> 
+        <Input
+          id="deliveryDate"
+          required
+          type="date"
+          min={new Date().toISOString().split("T")[0]}
+          value={deliveryDate}
+          onChange={(e) => setDeliveryDate(e.target.value)}
+          className="rounded-xl h-12 bg-secondary/20 border-transparent focus:border-input"
+        />
       </div>
 
       <div className="space-y-4">

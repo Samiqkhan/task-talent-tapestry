@@ -20,6 +20,7 @@ interface CustomRequest {
   name: string;
   phone: string;
   address?: string | null;
+  delivery_date?: string | null;
   request: string;
   status: string;
   created_at: string;
@@ -160,7 +161,12 @@ const Admin = () => {
                       <div className="text-sm text-muted-foreground">{req.phone}</div>
                       {req.address && (
                         <div className="text-xs text-muted-foreground mt-1 max-w-[200px] truncate" title={req.address}>
-                          {req.address}
+                          <strong>Addr:</strong> {req.address}
+                        </div>
+                      )}
+                      {req.delivery_date && (
+                        <div className="text-xs text-muted-foreground mt-1">
+                          <strong>Delivery:</strong> {new Date(req.delivery_date).toLocaleDateString()}
                         </div>
                       )}
                     </TableCell>
