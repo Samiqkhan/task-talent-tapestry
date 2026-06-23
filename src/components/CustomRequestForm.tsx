@@ -3,8 +3,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { PhoneCall } from "lucide-react";
+import { PhoneCall, Calendar as CalendarIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { format } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 interface CustomRequestFormProps {
   serviceName?: string;
@@ -18,7 +22,7 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
   const [phone, setPhone] = useState("");
   const [addressLine1, setAddressLine1] = useState("");
   const [addressLine2, setAddressLine2] = useState("");
-  const [deliveryDate, setDeliveryDate] = useState("");
+  const [deliveryDate, setDeliveryDate] = useState<Date | undefined>(undefined);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -79,7 +83,8 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
     const fullAddress = addressLine2.trim() 
       ? `${addressLine1.trim()}, ${addressLine2.trim()}`
       : addressLine1.trim();
-    const compiledRequest = `${finalItems.join(", ")} | Address: ${fullAddress} | Delivery Date: ${deliveryDate}`;
+    const formattedDate = deliveryDate ? format(deliveryDate, "yyyy-MM-dd") : "";
+    const compiledRequest = `${finalItems.join(", ")} | Address: ${fullAddress} | Delivery Date: ${formattedDate}`;
 
     try {
       // 1. Save to Database
@@ -89,7 +94,7 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
           name, 
           phone, 
           address: fullAddress,
-          delivery_date: deliveryDate,
+          delivery_date: formattedDate,
           request: compiledRequest || "General Inquiry",
           payment_screenshot_url: null,
           status: "Order Placed"
@@ -176,7 +181,7 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
             setPhone("");
             setAddressLine1("");
             setAddressLine2("");
-            setDeliveryDate("");
+            setDeliveryDate(undefined);
           }}
           className="w-full h-12 rounded-xl"
         >
@@ -286,17 +291,32 @@ export const CustomRequestForm = ({ serviceName, onSuccess }: CustomRequestFormP
         </div>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-2 flex flex-col">
         <Label htmlFor="deliveryDate">Preferred Delivery Date *</Label> 
-        <Input
-          id="deliveryDate"
-          required
-          type="date"
-          min={new Date().toISOString().split("T")[0]}
-          value={deliveryDate}
-          onChange={(e) => setDeliveryDate(e.target.value)}
-          className="rounded-xl h-12 bg-secondary/20 border-transparent focus:border-input"
-        />
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              id="deliveryDate"
+              variant={"outline"}
+              className={cn(
+                "w-full h-12 rounded-xl bg-secondary/20 border-transparent text-left font-normal hover:bg-secondary/30 justify-start px-3 focus-visible:ring-0 focus-visible:ring-offset-0",
+                !deliveryDate && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4 text-primary" />
+              {deliveryDate ? format(deliveryDate, "PPP") : <span>Pick a delivery date</span>}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0 rounded-xl" align="start">
+            <Calendar
+              mode="single"
+              selected={deliveryDate}
+              onSelect={setDeliveryDate}
+              disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+              initialFocus
+            />
+          </PopoverContent>
+        </Popover>
       </div>
 
       <div className="space-y-4">
